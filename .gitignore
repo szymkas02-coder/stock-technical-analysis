@@ -1,0 +1,16 @@
+*.csv
+*.png
+*.gif
+*.mp4
+*.pdf
+*.docx
+*.xlsx
+*.zip
+*.tar.gz
+plots/
+data/
+*video_script*
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+.env
