@@ -1,47 +1,47 @@
-# 8 strategii intraday na kryptowalutach — która naprawdę działa?
+# 8 Intraday Strategies on Cryptocurrencies — Which One Actually Works?
 
-Przetestowałem 8 strategii intraday na 20 największych kryptowalutach. Metodologia taka sama jak w poprzednim projekcie dotyczącym spółek z GPW — żadnych skrótów, żadnego oszukiwania danych. Wyniki są zaskakujące.
-
----
-
-## Skąd pomysł?
-
-W poprzednim projekcie sprawdzałem strategie intraday na polskich spółkach giełdowych. Naturalne pytanie: czy te same mechanizmy działają na kryptowalutach? Krypto to zupełnie inny rynek — handluje 24/7, jest znacznie bardziej zmienny, a gracze detaliczni dominują nad instytucjonalnymi. Postanowiłem to sprawdzić empirycznie.
-
-Ale nie chciałem testować strategii tylko na Bitcoinie. To zbyt wąski wycinek rynku. Zamiast tego przyjąłem podejście portfelowe: **każdego dnia rankinguję wszystkie 20 kryptowalut** według sygnału danej strategii i inwestuję równomiernie w **top-3** najlepiej rokujące. Dokładnie tak samo jak przy spółkach.
+I tested 8 intraday strategies on the top 20 cryptocurrencies. The methodology is the same as in the previous GPW project — no shortcuts, no data cheating. The results are surprising.
 
 ---
 
-## Dane i metodologia
+## The Idea
 
-**Dane:** Yahoo Finance, interwał 1 godzina, ostatnie 30 dni, 20 największych kryptowalut według kapitalizacji rynkowej (Bitcoin, Ethereum, BNB, Solana, XRP, Cardano, Avalanche, Dogecoin, TRON, Polkadot, Chainlink, Polygon, Litecoin, Uniswap, Cosmos, Stellar, NEAR, Internet Computer, Filecoin, Algorand).
+In the previous project I tested intraday strategies on Polish-listed stocks. The natural next question: do the same mechanisms work on cryptocurrencies? Crypto is a completely different market — it trades 24/7, is far more volatile, and retail traders dominate over institutions. I decided to test this empirically.
 
-**Kapitał startowy:** 10 000 USD
+But I did not want to test strategies only on Bitcoin. That is too narrow a slice of the market. Instead I took a portfolio approach: **every day I rank all 20 cryptocurrencies** by the signal of a given strategy and invest equally in the **top 3** best candidates — exactly as with the equity strategies.
 
-**Koszty transakcyjne:** 0,1% na stronę (0,2% round-trip) — typowe dla Binance czy Coinbase.
+---
 
-**Kluczowa zasada (brak lookahead bias):**
+## Data and Methodology
+
+**Data:** Yahoo Finance, 1-hour interval, last 30 days, top 20 cryptocurrencies by market capitalization (Bitcoin, Ethereum, BNB, Solana, XRP, Cardano, Avalanche, Dogecoin, TRON, Polkadot, Chainlink, Polygon, Litecoin, Uniswap, Cosmos, Stellar, NEAR, Internet Computer, Filecoin, Algorand).
+
+**Starting capital:** $10,000
+
+**Transaction costs:** 0.1% per side (0.2% round-trip) — typical for Binance or Coinbase.
+
+**Critical rule (no lookahead bias):**
 ```
-Sygnał  → bazuje na danych z zamknięcia świecy [0]
-Wejście → Open[1], pierwsza cena po potwierdzeniu sygnału
+Signal  → based on data from the close of candle [0]
+Entry   → Open[1], the first price after signal confirmation
 ```
-To pozornie drobny szczegół ma ogromne znaczenie. W poprzednim projekcie pominięcie tej zasady (kupno na Open[0] zamiast Open[1]) zmieniło wynik z +90% na -3%. Dlatego pilnujemy jej rygorystycznie.
+This seemingly small detail has enormous consequences. In the previous project, ignoring this rule (buying at Open[0] instead of Open[1]) changed the result from +90% to −3%. Hence strict enforcement.
 
-[WYKRES: crypto_plot1_equity_curves.png]
+[CHART: crypto_plot1_equity_curves.png]
 
 ---
 
-## 8 strategii — skąd się wzięły?
+## 8 Strategies — Their Origins
 
-Przetestowałem dwie grupy strategii:
+I tested two groups of strategies:
 
-**Przeniesione z projektu GPW** (dostosowane do 24/7 krypto):
-1. Momentum pierwszej godziny
-2. Mean Reversion pierwszej godziny
-3. Gap Up (luka vs poprzednie zamknięcie)
-4. EoD Streak (ciąg wzrostowych świec)
+**Carried over from the GPW project** (adapted for 24/7 crypto):
+1. First-hour Momentum
+2. First-hour Mean Reversion
+3. Gap Up (gap vs previous close)
+4. EoD Streak (consecutive rising candles)
 
-**Nowe — specyficzne dla krypto:**
+**New — crypto-specific:**
 5. RSI Oversold
 6. Bollinger Bands
 7. EMA Golden Cross
@@ -49,114 +49,114 @@ Przetestowałem dwie grupy strategii:
 
 ---
 
-## Jak działają strategie
+## How the Strategies Work
 
 ### 1. Momentum 1h
-Każdego dnia obliczamy zwrot pierwszej godziny handlu `(Close[0] - Open[0]) / Open[0]` dla każdej z 20 kryptowalut. Kupujemy top-3 z najsilniejszym momentum na otwarciu drugiej świecy. Wyjście gdy cena zaczyna spadać (trailing stop) lub na zamknięciu doby.
+Each day we compute the first-hour return `(Close[0] - Open[0]) / Open[0]` for each of the 20 cryptocurrencies. Buy the top 3 with the strongest momentum at the open of the second candle. Exit when price starts falling (trailing stop) or at end of day.
 
 ### 2. Mean Reversion 1h
-Odwrotność poprzedniej — kupujemy bottom-3, czyli krypto które w pierwszej godzinie spadły najmocniej. Zakład: duże krótkoterminowe ruchy są przesadzone i cena wróci do średniej. Wyjście EOD.
+The opposite — buy the bottom 3, i.e. cryptos that fell most in the first hour. The bet: large short-term moves are exaggerated and price will revert to the mean. Exit EOD.
 
 ### 3. Gap Up
-Szukamy kryptowalut, które otworzyły się więcej niż 0,5% powyżej poprzedniego zamknięcia. Kupujemy top-3 według wielkości luki. Wyjście EOD.
+Look for cryptos that opened more than 0.5% above the previous close. Buy the top 3 ranked by gap size. Exit EOD.
 
 ### 4. EoD Streak
-Liczymy ile kolejnych świec z rzędu dana kryptowaluta rośnie (na całej dostępnej historii godzinowej, kończąc na Close[0]). Top-3 z najdłuższym ciągiem wzrostów — zakład na kontynuację trendu. Wyjście EOD.
+Count how many consecutive candles in a row a given crypto has been rising (across the full available hourly history, ending at Close[0]). Top 3 with the longest streak — bet on trend continuation. Exit EOD.
 
 ### 5. RSI Oversold
-Wskaźnik RSI(14) obliczany na pełnej historii godzinowej. Kwalifikuje się kryptowaluta z RSI poniżej 30 na Close[0] — klasyczny sygnał wyprzedania. Rankujemy wg najniższego RSI, kupujemy top-3. Wyjście EOD.
+RSI(14) computed on the full hourly history. A crypto qualifies if RSI is below 30 at Close[0] — classic oversold signal. Rank by lowest RSI, buy top 3. Exit EOD.
 
 ### 6. Bollinger Bands
-Pasma Bollingera (okno 20 świec, 2 odchylenia standardowe). Sygnał gdy Close[0] spada poniżej dolnej bandy. Rankujemy wg odchylenia od bandy (im dalej poniżej, tym wyższy priorytet). Wyjście EOD.
+Bollinger Bands (20-candle window, 2 standard deviations). Signal when Close[0] falls below the lower band. Rank by distance below the band (further below = higher priority). Exit EOD.
 
 ### 7. EMA Golden Cross
-Szukamy kryptowalut, gdzie EMA(8) właśnie przekroczyła EMA(21) w górę w ciągu ostatnich 3 świec. Rankujemy wg siły separacji między liniami. To klasyczny sygnał trendowy. Wyjście EOD.
+Look for cryptos where EMA(8) has just crossed above EMA(21) within the last 3 candles. Rank by strength of separation between the lines. Classic trend signal. Exit EOD.
 
 ### 8. MACD + RSI Hybrid
-Sygnał tylko gdy spełnione są dwa warunki jednocześnie: MACD > linia sygnału MACD **oraz** RSI < 40. Rankujemy wg siły łączonego sygnału: `(MACD - Signal) × (40 - RSI)`. Wyjście EOD.
+Signal only when two conditions are simultaneously met: MACD > MACD signal line **and** RSI < 40. Rank by combined signal strength: `(MACD - Signal) × (40 - RSI)`. Exit EOD.
 
 ---
 
-## Wyniki
+## Results
 
-| Strategia | Zwrot | Max DD | Sharpe | Win Rate | Transakcji |
+| Strategy | Return | Max DD | Sharpe | Win Rate | Transactions |
 |---|---|---|---|---|---|
-| 1. Momentum | -2,29% | -6,22% | -1,61 | 30,2% | 96 |
-| 2. Mean Reversion | -16,83% | -15,39% | -2,49 | 34,4% | 96 |
-| 3. Gap Up | brak | — | — | — | 0 |
-| 4. EoD Streak | -14,40% | -4,42% | -3,55 | 52,1% | 48 |
-| 5. RSI Oversold | -14,25% | -12,93% | -4,11 | 30,6% | 36 |
-| 6. Bollinger Bands | -3,48% | -3,22% | -6,58 | 12,5% | 8 |
-| 7. **EMA Golden Cross** | **+21,79%** | **-2,01%** | **7,09** | **52,2%** | 23 |
-| 8. MACD + RSI | -2,69% | -5,24% | -1,95 | 28,6% | 14 |
+| 1. Momentum | −2.29% | −6.22% | −1.61 | 30.2% | 96 |
+| 2. Mean Reversion | −16.83% | −15.39% | −2.49 | 34.4% | 96 |
+| 3. Gap Up | none | — | — | — | 0 |
+| 4. EoD Streak | −14.40% | −4.42% | −3.55 | 52.1% | 48 |
+| 5. RSI Oversold | −14.25% | −12.93% | −4.11 | 30.6% | 36 |
+| 6. Bollinger Bands | −3.48% | −3.22% | −6.58 | 12.5% | 8 |
+| 7. **EMA Golden Cross** | **+21.79%** | **−2.01%** | **7.09** | **52.2%** | 23 |
+| 8. MACD + RSI | −2.69% | −5.24% | −1.95 | 28.6% | 14 |
 
-[WYKRES: crypto_plot4_win_rate.png]
-
----
-
-## Co wynika z tych liczb?
-
-### EMA Golden Cross — jedyny wyraźny zwycięzca
-
-+21,79% w 30 dni przy max drawdown zaledwie -2,01% i Sharpe 7,09 — to bardzo dobry wynik. Strategia wygenerowała tylko 23 transakcje, co oznacza selektywność: wchodzi rzadko, ale celnie. Top krypto to NEAR (+16,4%), Chainlink (+6%), Cardano (+3,7%).
-
-Intuicja jest prosta: złoty krzyż EMA(8/21) na wykresie godzinowym oznacza że krótkoterminowe momentum właśnie zmieniło kierunek na wzrostowy. W środowisku krypto, gdzie trendy bywają gwałtowne, taki sygnał ma realne znaczenie.
-
-Warto jednak zachować ostrożność — 23 transakcje to mało obserwacji. Wynik może być częściowo szczęściem albo przypadkiem trafionego okna czasowego.
-
-[WYKRES: crypto_plot2_drawdown.png]
-
-### Mean Reversion — najgorszy wynik
-
--16,83% i win rate 34,4%. Strategia Mean Reversion działa odwrotnie do intuicji: kryptowaluta która mocno spada w pierwszej godzinie... często spada dalej. Na rynku krypto momentum jest ważniejsze niż powrót do średniej. Spadające krypto przyciągają kolejnych sprzedających, nie kupujących.
-
-To odwrotność wyniku z GPW, gdzie Mean Reversion jako jedyna strategia zakończyła się na plusie (+5,33%). Rynki akcji i krypto zachowują się inaczej.
-
-### RSI i Bollinger — pułapka klasycznych wskaźników
-
-RSI Oversold: -14,25%, win rate 30,6%. Bollinger Bands: -3,48%, win rate 12,5%. Oba wskaźniki zostały zaprojektowane z myślą o rynkach o ograniczonej zmienności. Na krypto RSI < 30 wcale nie oznacza że coś jest "tanie" — może oznaczać że właśnie zaczął się crash. Dolna banda Bollingera to nie podłoga, tylko obserwacja że cena jest nisko względem ostatnich 20 świec.
-
-### Gap Up — zero transakcji
-
-Strategia Gap Up nie wygenerowała ani jednej transakcji. Próg 0,5% luki okazał się zbyt wysoki albo krypto w badanym oknie czasowym nie tworzyły istotnych luk godzinowych. Rynek 24/7 nie ma "zamknięcia" w tradycyjnym sensie — kryptowaluty handlują nieustannie, więc luki overnight praktycznie nie istnieją.
-
-[WYKRES: crypto_plot3_distributions.png]
-
-### EoD Streak — wysoki win rate, ale ogromna strata
-
-Ciekawy przypadek: win rate 52,1% (większość transakcji na plusie) ale łączny zwrot -14,40%. Dlaczego? Rozkład zwrotów jest asymetryczny — małe zyski i sporadyczne katastrofalne straty. Najgorsza transakcja: -15,27%. Na krypto długie serie wzrostów często kończą się gwałtownym odwróceniem.
-
-[WYKRES: crypto_plot5_top_tickers.png]
+[CHART: crypto_plot4_win_rate.png]
 
 ---
 
-## Porównanie z wynikami na GPW
+## What Do These Numbers Tell Us?
 
-| Strategia | GPW (30 dni) | Krypto (30 dni) |
+### EMA Golden Cross — The Only Clear Winner
+
++21.79% in 30 days with a max drawdown of just −2.01% and Sharpe 7.09 — a very strong result. The strategy generated only 23 transactions, reflecting selectivity: it enters rarely but accurately. Top cryptos: NEAR (+16.4%), Chainlink (+6%), Cardano (+3.7%).
+
+The intuition is simple: an EMA(8/21) golden cross on the hourly chart means short-term momentum has just turned upward. In the crypto environment, where trends can be violent, this signal carries real information.
+
+Caution is warranted, however — 23 transactions is a small sample. The result may be partly luck or a coincidentally favorable time window.
+
+[CHART: crypto_plot2_drawdown.png]
+
+### Mean Reversion — The Worst Result
+
+−16.83% and a win rate of 34.4%. Mean Reversion works contrary to intuition here: a crypto that drops sharply in the first hour... often continues to drop. In crypto markets, momentum is more powerful than mean reversion. Falling crypto attracts more sellers, not buyers.
+
+This is the exact opposite of the GPW result, where Mean Reversion was the only strategy that finished positive (+5.33%). Equity and crypto markets behave very differently.
+
+### RSI and Bollinger Bands — Classic Indicator Traps
+
+RSI Oversold: −14.25%, win rate 30.6%. Bollinger Bands: −3.48%, win rate 12.5%. Both indicators were designed for markets with limited volatility. In crypto, RSI < 30 does not mean something is "cheap" — it may mean a crash has just begun. The lower Bollinger Band is not a floor, just an observation that price is low relative to the last 20 candles.
+
+### Gap Up — Zero Transactions
+
+The Gap Up strategy generated no transactions at all. The 0.5% gap threshold was either too high, or cryptos in the test window simply did not form significant hourly gaps. A 24/7 market has no "close" in the traditional sense — cryptocurrencies trade continuously, so overnight gaps barely exist.
+
+[CHART: crypto_plot3_distributions.png]
+
+### EoD Streak — High Win Rate, Massive Loss
+
+An interesting case: win rate 52.1% (most trades positive) but total return −14.40%. Why? The return distribution is asymmetric — small gains and occasional catastrophic losses. Worst single trade: −15.27%. In crypto, long winning streaks often end with a violent reversal.
+
+[CHART: crypto_plot5_top_tickers.png]
+
+---
+
+## Comparison with GPW Results
+
+| Strategy | GPW (30 days) | Crypto (30 days) |
 |---|---|---|
-| Momentum | -3,23% | -2,29% |
-| Mean Reversion | **+5,33%** | -16,83% |
-| Gap Up | -17,67% | brak transakcji |
-| EoD Streak | -2,98% | -14,40% |
+| Momentum | −3.23% | −2.29% |
+| Mean Reversion | **+5.33%** | −16.83% |
+| Gap Up | −17.67% | no transactions |
+| EoD Streak | −2.98% | −14.40% |
 
-Momentum daje podobne słabe wyniki na obu rynkach. Mean Reversion jest najlepszą strategią na GPW i najgorszą na krypto. Gap Up jest katastrofalny na GPW i bezużyteczny na krypto. To pokazuje że te same mechanizmy działają zupełnie inaczej w zależności od rynku.
-
----
-
-## Ograniczenia i zastrzeżenia
-
-**Krótki okres testów.** 30 dni to za mało żeby wyciągać mocne wnioski. Wyniki EMA Golden Cross mogą być specyficzne dla konkretnego miesiąca, w którym kryptowaluta NEAR akurat przeżywała silny ruch.
-
-**Dane Yahoo Finance.** Dane godzinowe dla kryptowalut z Yahoo Finance mogą zawierać luki i nieścisłości, szczególnie dla mniej płynnych tokenów.
-
-**Brak slippage.** Model zakłada egzekucję po dokładnym Open[1]. W rzeczywistości dla dużych zleceń cena wykonania będzie gorsza.
-
-**Podatki i regulacje.** Handel kryptowalutami podlega opodatkowaniu. W Polsce zyski z krypto są opodatkowane 19% podatkiem od zysków kapitałowych (Belka). Częste transakcje intraday generują dużo zdarzeń podatkowych.
-
-**To nie jest doradztwo inwestycyjne.** Wyniki historyczne nie gwarantują przyszłych zysków. Inwestowanie w kryptowaluty wiąże się z wysokim ryzykiem utraty kapitału.
+Momentum delivers similarly weak results on both markets. Mean Reversion is the best strategy on GPW and the worst on crypto. Gap Up is catastrophic on GPW and useless on crypto. This demonstrates that the same mechanisms behave completely differently depending on the market.
 
 ---
 
-## Kod
+## Limitations and Caveats
 
-Pełny kod dostępny w repozytorium: notebook Python z pobieraniem danych, implementacją wszystkich 8 strategii i wizualizacjami.
+**Short test period.** 30 days is insufficient for strong conclusions. EMA Golden Cross results may be specific to the particular month when NEAR experienced an exceptionally strong move.
+
+**Yahoo Finance data.** Hourly crypto data from Yahoo Finance may contain gaps and inaccuracies, especially for less liquid tokens.
+
+**No slippage.** The model assumes execution at the exact Open[1] price. In reality, for larger orders the fill price will be worse.
+
+**Taxes and regulation.** Crypto trading is subject to taxation. In Poland, crypto gains are taxed at 19% capital gains tax (Belka). Frequent intraday trades generate many tax events.
+
+**Not investment advice.** Past performance does not guarantee future results. Investing in cryptocurrencies involves a high risk of capital loss.
+
+---
+
+## Code
+
+Full code available in the repository: Python notebook with data download, implementation of all 8 strategies, and visualizations.

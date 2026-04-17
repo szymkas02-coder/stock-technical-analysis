@@ -1,98 +1,98 @@
-# Day trading nie ma sensu — 40 lat danych Apple jako dowód
+# Day Trading Makes No Sense — 40 Years of Apple Data as Proof
 
-Miliony ludzi codziennie patrzy na RSI, MACD i stochastyczny, żeby zdecydować czy kupić czy sprzedać. Wziąłem 40 lat danych Apple i sprawdziłem empirycznie, czy te wskaźniki w ogóle coś mówią o jutrzejszym kursie.
+Millions of people look at RSI, MACD, and Stochastic every day to decide whether to buy or sell. I took 40 years of Apple data and empirically tested whether these indicators say anything at all about tomorrow's price.
 
-Odpowiedź jest jednoznaczna — i ma konkretne konsekwencje dla każdego, kto myśli o day tradingu.
-
----
-
-## Dane i metodologia
-
-**Dane:** kurs AAPL z Yahoo Finance, okres 1980–2026, 11 365 sesji giełdowych.
-
-**Cechy:** RSI(14), Stochastic %K i %D (14,3,3), EMA(20), MACD linia/sygnał/histogram, Williams %R(14), kurs zamknięcia poprzedniego dnia. To standardowy zestaw wskaźników z każdej platformy tradingowej.
-
-**Pytanie:** czy znając te wartości z dnia t, można skuteczniej niż losowo przewidzieć ruch kursu w dniu t+1?
-
-Walidacja uczciwa: chronologiczny podział 90%/10%, model trenowany na danych do 2021 roku, testowany na 2021–2026. Model: XGBoost z doborem hiperparametrów przez cross-validation.
-
-[WYKRES: plot1_price_returns.png]
+The answer is unambiguous — and has concrete consequences for anyone thinking about day trading.
 
 ---
 
-## Zanim odpalimy modele — autokorelacja zwrotów
+## Data and Methodology
 
-Pierwsza analiza, zanim w ogóle trenujemy cokolwiek: autokorelacja dziennych zwrotów.
+**Data:** AAPL from Yahoo Finance, period 1980–2026, 11,365 trading sessions.
 
-[WYKRES: plot3_acf_pacf.png]
+**Features:** RSI(14), Stochastic %K and %D (14,3,3), EMA(20), MACD line/signal/histogram, Williams %R(14), previous-day closing price. The standard set of indicators found on any trading platform.
 
-Każdy słupek na wykresie ACF to korelacja dzisiejszego zwrotu ze zwrotem sprzed N dni. Niebieska wstęga to 95% przedział ufności — jeśli słupek jest w środku, nie ma statystycznie istotnego sygnału.
+**Question:** knowing these values from day t, can you predict the price move on day t+1 better than random chance?
 
-Przy żadnym opóźnieniu od 1 do 40 dni sygnał nie wychodzi poza wstęgę. Statystyka Durbina-Watsona wynosi ~2,0, co odpowiada brakowi autokorelacji.
+Honest validation: chronological 90%/10% split, model trained on data up to 2021, tested on 2021–2026. Model: XGBoost with hyperparameter tuning via cross-validation.
 
-**Co to znaczy praktycznie:** to, co Apple zrobiło wczoraj (i przed tygodniem, i przed miesiącem), nie mówi nic o tym co zrobi jutro. Zwroty dzienne to statystycznie szum losowy.
-
-Jedyna rzecz, która *jest* autokorelowana, to **zmienność** — po burzliwym dniu zwykle następuje kolejny burzliwy dzień. Można przewidzieć *jak duży* będzie ruch, ale nie *w którą stronę*.
-
-[WYKRES: plot4_volatility.png]
+[CHART: plot1_price_returns.png]
 
 ---
 
-## Wyniki modeli
+## Before Running Any Models — Return Autocorrelation
 
-### Regresja: ile procent zmieni się kurs jutro?
+First analysis, before training anything: autocorrelation of daily returns.
+
+[CHART: plot3_acf_pacf.png]
+
+Each bar in the ACF chart is the correlation between today's return and the return from N days ago. The blue band is the 95% confidence interval — if a bar is inside the band, there is no statistically significant signal.
+
+For no lag from 1 to 40 days does the signal exceed the confidence band. The Durbin-Watson statistic is ~2.0, consistent with zero autocorrelation.
+
+**What this means in practice:** what Apple did yesterday (and a week ago, and a month ago) tells you nothing about what it will do tomorrow. Daily returns are statistically random noise.
+
+The only thing that *is* autocorrelated is **volatility** — a volatile day tends to be followed by another volatile day. You can predict *how large* the next move will be, but not *in which direction*.
+
+[CHART: plot4_volatility.png]
+
+---
+
+## Model Results
+
+### Regression: What Percentage Will the Price Change Tomorrow?
 
 | | R² |
 |---|---|
-| XGBoost (trening) | 0,013 |
-| XGBoost (holdout 2021–2026) | **0,006** |
-| Dummy baseline (zawsze przewiduj zero) | −0,001 |
+| XGBoost (training) | 0.013 |
+| XGBoost (holdout 2021–2026) | **0.006** |
+| Dummy baseline (always predict zero) | −0.001 |
 
-R² holdoutowy wynosi 0,006 — model wyjaśnia **0,6% wariancji** dziennych zwrotów. RMSE to 1,76%, przy czym średnia absolutna dzienna zmiana kursu jest podobna — model jest równoważny przewidywaniu zera każdego dnia.
+Holdout R² is 0.006 — the model explains **0.6% of the variance** in daily returns. RMSE is 1.76%, while the mean absolute daily price change is similar — the model is equivalent to predicting zero every day.
 
-[WYKRES: plot6_regression_holdout.png]
+[CHART: plot6_regression_holdout.png]
 
-### Klasyfikacja: góra czy dół?
+### Classification: Up or Down?
 
 | | Accuracy |
 |---|---|
-| XGBoost (trening) | 53,8% |
-| XGBoost (holdout 2021–2026) | **53,3%** |
-| Dummy baseline (zawsze „wzrost") | 53,0% |
+| XGBoost (training) | 53.8% |
+| XGBoost (holdout 2021–2026) | **53.3%** |
+| Dummy baseline (always predict "up") | 53.0% |
 
-Model klasyfikacyjny osiąga 53,3% trafności. Dummy classifier — który po prostu zawsze mówi "wzrost", bo statystycznie wzrostów jest trochę więcej — osiąga 53,0%. **Przewaga modelu nad losem: 0,3 punktu procentowego.**
+The classification model achieves 53.3% accuracy. A dummy classifier that simply always predicts "up" — because statistically there are slightly more up days — achieves 53.0%. **Model advantage over chance: 0.3 percentage points.**
 
-[WYKRES: plot7_classification_results.png]
-
----
-
-## Dlaczego wskaźniki techniczne nie działają?
-
-RSI to funkcja ostatnich 14 zamknięć. MACD to różnica dwóch EMA. Stochastic to znormalizowane minima i maksima z ostatnich N dni. Wszystkie te wskaźniki są **matematycznymi przekształceniami tej samej ceny zamknięcia** — nie wnoszą nowej informacji.
-
-A sama cena, jak pokazuje ACF, nie ma pamięci na poziomie jednodniowym. Nie ma więc czego wyciągać.
+[CHART: plot7_classification_results.png]
 
 ---
 
-## Co to oznacza dla day tradingu?
+## Why Don't Technical Indicators Work?
 
-Wyobraźmy sobie optymistyczny scenariusz: nasz model ma 53,3% trafności. Przy typowych kosztach transakcji (prowizja + spread, łącznie ~0,2–0,3% na obrót), żeby wyjść na zero przy codziennym tradingu, potrzebujemy trafności wyraźnie powyżej 50%. Nawet zanim uwzględnimy podatek Belki (19% od zysku), ta 0,3% przewaga nad dummy jest z dużym prawdopodobieństwem przypadkowa — szum statystyczny na 1137 dniach.
+RSI is a function of the last 14 closes. MACD is the difference between two EMAs. Stochastic is normalized min/max from the last N days. All these indicators are **mathematical transformations of the same closing price** — they add no new information.
 
-Badania empiryczne to potwierdzają: analizy detalicznych day traderów na rynku brazylijskim (Chague et al., 2020) i amerykańskim (Barber & Odean) pokazują, że ok. 70–80% z nich traci pieniądze po kosztach transakcji.
-
-**Ważne zastrzeżenie:** ten wynik dotyczy konkretnej sytuacji — klasycznych wskaźników technicznych, danych dziennych, dużej płynnej spółki jak AAPL. Profesjonalni traderzy HFT operują na danych z rozdzielczością sekund, patrzą na przepływ zleceń (order flow), i mają przewagę technologiczną niedostępną dla detalicznego inwestora. To zupełnie inny świat niż RSI na wykresie dziennym.
+And the price itself, as the ACF shows, has no memory at the one-day horizon. There is nothing to extract.
 
 ---
 
-## Wnioski
+## What This Means for Day Trading
 
-- Dzienne zwroty AAPL są statystycznie spójne z błądzeniem losowym (EMH, forma słaba).
-- XGBoost wytrenowany na 9 klasycznych wskaźnikach technicznych nie bije trivialnego baseline na 5 latach niewidzianych danych.
-- Zmienność jest częściowo przewidywalna — kierunek nie.
-- Day trading oparty na wskaźnikach technicznych i danych dziennych to operowanie na szumie, nie na sygnale — koszty transakcji robią resztę.
+Consider an optimistic scenario: our model has 53.3% accuracy. With typical transaction costs (commission + spread, roughly 0.2–0.3% per trade), to break even at daily trading you need accuracy meaningfully above 50%. Even before accounting for capital gains tax (19%), this 0.3% advantage over the dummy is most likely statistical noise on 1,137 days.
 
-> Dobry wynik w uczeniu maszynowym nie zawsze znaczy, że problem jest rozwiązany. Czasem znaczy, że nie ma tu żadnego sygnału do wyciągnięcia.
+Empirical research confirms this: studies of retail day traders in the Brazilian market (Chague et al., 2020) and US market (Barber & Odean) show that roughly 70–80% lose money after transaction costs.
+
+**Important caveat:** this result applies to a specific situation — classical technical indicators, daily data, a large liquid stock like AAPL. Professional HFT traders operate on second-level data, watch order flow, and have technological advantages unavailable to retail investors. That is a completely different world from RSI on a daily chart.
 
 ---
 
-*Dane: Yahoo Finance. Kod: Python, XGBoost, TA-Lib. Holdout: sierpień 2021 – marzec 2026. Kod dostępny na GitHubie [link].*
+## Conclusions
+
+- Daily AAPL returns are statistically consistent with a random walk (EMH, weak form).
+- XGBoost trained on 9 classical technical indicators does not beat a trivial baseline on 5 years of unseen data.
+- Volatility is partially predictable — direction is not.
+- Day trading based on technical indicators and daily data means operating on noise, not signal — transaction costs do the rest.
+
+> A good result in machine learning does not always mean the problem is solved. Sometimes it means there is no signal here to extract.
+
+---
+
+*Data: Yahoo Finance. Code: Python, XGBoost, TA-Lib. Holdout: August 2021 – March 2026. Code available on GitHub.*

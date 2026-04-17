@@ -1,108 +1,108 @@
-# Czy da się zarobić intraday na GPW? Testujemy 4 strategie na spółkach WIG20/mWIG40/sWIG80
+# Can You Make Money Intraday on the Warsaw Stock Exchange? Testing 4 Strategies on WIG20/mWIG40/sWIG80
 
-Handel intraday kojarzy się z dynamicznymi rynkami — Wall Street, kryptowaluty, forex. Ale co z GPW? Czy krótkoterminowe strategie mają sens na polskim rynku akcji, gdzie płynność jest nieporównywalnie mniejsza? Postanowiliśmy to sprawdzić — backtestem na danych godzinowych z ostatnich 30 dni, na szerokim universum ~140 spółek z indeksów WIG20, mWIG40 i sWIG80.
-
----
-
-## Zasady testu
-
-Wszystkie strategie działają na tym samym zestawie założeń:
-
-- **Dane:** godzinowe świece OHLCV z Yahoo Finance, ostatnie 30 dni sesyjnych
-- **Universum:** ~140 spółek z WIG20, mWIG40 i sWIG80 (skład na 06.03.2026)
-- **Kapitał startowy:** 100 000 PLN
-- **Koszty transakcyjne:** 0,05% na stronę (0,1% round-trip) — typowe dla polskiego rynku detalicznego
-- **Podział kapitału:** równy między wybrane spółki danego dnia
-- **Ważna zasada:** sygnał jest wyznaczany na podstawie zamknięcia pierwszej świecy (Close[0]), a wejście następuje dopiero na otwarciu *kolejnej* świecy (Open[1]) — żeby uniknąć lookahead bias
+Intraday trading is associated with dynamic markets — Wall Street, crypto, forex. But what about GPW (Warsaw Stock Exchange)? Do short-term strategies make sense in the Polish equity market, where liquidity is incomparably lower? I decided to find out — with a backtest on hourly data from the last 30 trading days, across a broad universe of ~140 stocks from the WIG20, mWIG40, and sWIG80 indices.
 
 ---
 
-## 4 strategie
+## Test Rules
 
-### 1. Momentum pierwszej godziny
+All strategies share the same set of assumptions:
 
-Strategia rankinguje spółki według zwrotu w pierwszej godzinie sesji `(Close[0] - Open[0]) / Open[0]`, wybiera top 3 i kupuje je na otwarciu drugiej godziny. Sprzedaż następuje przy pierwszym spadku zamknięcia poniżej poprzedniego zamknięcia, lub na końcu dnia jeśli pozycja cały czas rosła.
+- **Data:** hourly OHLCV candles from Yahoo Finance, last 30 trading sessions
+- **Universe:** ~140 stocks from WIG20, mWIG40, and sWIG80 (composition as of 06.03.2026)
+- **Starting capital:** 100,000 PLN
+- **Transaction costs:** 0.05% per side (0.1% round-trip) — typical for Polish retail brokers
+- **Capital allocation:** equal split among selected stocks on a given day
+- **Critical rule:** signal is generated using the closing price of the first candle (Close[0]); entry happens only at the open of the *next* candle (Open[1]) — to avoid lookahead bias
 
-**Logika:** spółka która mocno rośnie w pierwszej godzinie ma momentum — inni inwestorzy zauważą i dołączą.
+---
+
+## 4 Strategies
+
+### 1. First-Hour Momentum
+
+Ranks stocks by their return in the first trading hour `(Close[0] - Open[0]) / Open[0]`, selects the top 3, and buys them at the open of the second hour. Exit occurs on the first close below the previous close, or at end of day if the position kept rising.
+
+**Logic:** a stock that rises sharply in the first hour has momentum — other investors will notice and join.
 
 ### 2. Mean Reversion
 
-Odwrotność momentum — wybiera 3 spółki z *największymi spadkami* w pierwszej godzinie, zakładając że po silnym ruchu w dół nastąpi odbicie. Kupuje na Open[1], trzyma do końca dnia.
+The opposite of momentum — selects the 3 stocks with the *largest first-hour declines*, betting that a strong down-move will be followed by a bounce. Buys at Open[1], holds until end of day.
 
-**Logika:** na płytkim rynku jak GPW przereagowania są częste — spółka która spadła 2% w jednej godzinie bez powodu fundamentalnego często odbija do południa.
+**Logic:** on a shallow market like GPW, overreactions are frequent — a stock that falls 2% in one hour for no fundamental reason often bounces back by midday.
 
 ### 3. Gap Up
 
-Kupuje spółki które otworzyły się luką w górę powyżej 0,5% względem poprzedniego zamknięcia. Wejście na Open[0] (bo sygnał pochodzi z poprzedniego dnia), wyjście na zamknięciu dnia.
+Buys stocks that opened with a gap up of more than 0.5% versus the previous close. Entry at Open[0] (because the signal comes from the previous day), exit at end of day.
 
-**Logika:** luka w górę sygnalizuje pozytywną zmianę sentymentu — ktoś kupował w nocy lub rano przed otwarciem.
+**Logic:** a gap up signals a positive sentiment shift — someone was buying overnight or in the pre-market.
 
 ### 4. End-of-Day Momentum
 
-Szuka spółek z co najmniej 2 kolejnymi wzrostowymi świecami w trakcie dnia. Wchodzi po cenie zamknięcia świecy sygnałowej, trzyma do końca dnia.
+Looks for stocks with at least 2 consecutive rising candles during the session. Enters at the closing price of the signal candle, holds until end of day.
 
-**Logika:** konsekwentny trend w ciągu dnia ma większą szansę na kontynuację niż jednorazowy impuls.
+**Logic:** a consistent intraday trend has a higher probability of continuation than a one-off impulse.
 
 ---
 
-## Wyniki
+## Results
 
-[WYKRES: plot1_equity_curves.png]
+[CHART: plot1_equity_curves.png]
 
-| Strategia | Zwrot | Max DD | Sharpe | Win Rate | Transakcji |
+| Strategy | Return | Max DD | Sharpe | Win Rate | Transactions |
 |---|---|---|---|---|---|
-| **Momentum** | -3,23% | -8,85% | -1,55 | 31,7% | 63 |
-| **Mean Reversion** | **+5,33%** | -5,49% | **2,64** | **55,6%** | 63 |
-| **Gap Up** | -17,67% | -16,46% | -10,69 | 30,0% | 60 |
-| **EoD Momentum** | -2,98% | -3,12% | -5,91 | 23,8% | 63 |
+| **Momentum** | −3.23% | −8.85% | −1.55 | 31.7% | 63 |
+| **Mean Reversion** | **+5.33%** | −5.49% | **2.64** | **55.6%** | 63 |
+| **Gap Up** | −17.67% | −16.46% | −10.69 | 30.0% | 60 |
+| **EoD Momentum** | −2.98% | −3.12% | −5.91 | 23.8% | 63 |
 
-Wyniki są wymowne. Spośród czterech strategii tylko jedna zakończyła test na plusie — **Mean Reversion** z wynikiem +5,33% w ciągu miesiąca i współczynnikiem Sharpe'a 2,64. Pozostałe trzy przyniosły straty.
+The results are telling. Of the four strategies only one finished in positive territory — **Mean Reversion** with a return of +5.33% over the month and a Sharpe ratio of 2.64. The other three produced losses.
 
-[WYKRES: plot2_drawdown.png]
+[CHART: plot2_drawdown.png]
 
-### Co poszło nie tak z Momentum?
+### What Went Wrong with Momentum?
 
-Momentum pierwszej godziny wydaje się intuicyjne — podążaj za silnymi spółkami. Problem w tym, że na GPW silny ruch w pierwszej godzinie często *wyczerpuje* popyt na dany dzień. Spółka która wzrosła 3% do 10:00 ma duże szanse na konsolidację lub korektę przez resztę sesji. Wynik: 31,7% skuteczność i -3,23% zwrotu.
+First-hour momentum seems intuitive — follow the strong stocks. The problem is that on GPW, a strong move in the first hour often *exhausts* the day's demand. A stock that rose 3% by 10:00 a.m. is likely to consolidate or retrace for the rest of the session. Result: 31.7% win rate and −3.23% return.
 
-[WYKRES: plot3_return_distributions.png]
+[CHART: plot3_return_distributions.png]
 
-### Dlaczego Gap Up tak rozczarował?
+### Why Did Gap Up Disappoint So Badly?
 
-Gap Up wypadł najgorzej ze wszystkich strategii (-17,67%, Sharpe -10,69). Intuicja jest prosta — luka w górę to dobry znak. W praktyce jednak na GPW luki często są "łatane" tego samego dnia: rynek otwiera się wysoko, ale brakuje dalszych kupujących, więc kurs spada przez resztę sesji. Strategia konsekwentnie kupowała blisko dziennych szczytów.
+Gap Up performed worst of all strategies (−17.67%, Sharpe −10.69). The intuition is simple — a gap up is a good sign. In practice on GPW, gaps are frequently "filled" the same day: the market opens high but there are no further buyers, so the price drifts lower for the rest of the session. The strategy consistently bought near daily highs.
 
-### Mean Reversion — przypadek czy przewaga?
+### Mean Reversion — Luck or Edge?
 
-+5,33% w miesiącu przy Sharpe 2,64 to imponujący wynik — ale należy zachować ostrożność. 30 dni to zbyt krótki okres, żeby wyciągać daleko idące wnioski. Mechanizm jest jednak logiczny dla GPW: przy niskiej płynności przereagowania są częste, a duże instytucje często "zbierają" przecenione akcje w ciągu dnia.
++5.33% in a month at Sharpe 2.64 is an impressive result — but caution is warranted. 30 days is too short a period to draw far-reaching conclusions. The mechanism is, however, logical for GPW: with low liquidity, overreactions are frequent, and large institutions often accumulate discounted shares intraday.
 
-[WYKRES: plot4_win_rate_avg_return.png]
+[CHART: plot4_win_rate_avg_return.png]
 
-### Najlepsze spółki per strategia
+### Top Stocks per Strategy
 
-[WYKRES: plot5_top_tickers.png]
+[CHART: plot5_top_tickers.png]
 
-Warto zwrócić uwagę na **Captor Therapeutics** — pojawia się zarówno w top Momentum (+18,38%) jak i Mean Reversion (+2,98%), co sugeruje że była to spółka z wyjątkową zmiennością w testowanym okresie, a nie efekt systemowy strategii.
-
----
-
-## Koszty transakcyjne mają znaczenie
-
-Przy założeniu 0,1% round-trip, każda transakcja "startuje" ze stratą. Przy 63 transakcjach w miesiącu i średniej alokacji ~33 333 PLN na pozycję, same koszty pochłaniają ~2 100 PLN miesięcznie. Dla strategii z małymi średnimi zwrotami (Momentum: -0,14%, EoD: -0,14%) to różnica między zyskiem a stratą.
-
-W praktyce na GPW warto rozważyć:
-- Obniżenie częstości transakcji (top 1 zamiast top 3)
-- Wyższy próg sygnału (np. gap >1% zamiast >0,5%)
-- Filtr płynności — pomijanie spółek z dziennym obrotem poniżej 1 mln PLN
+Worth noting: **Captor Therapeutics** appears in both the top Momentum (+18.38%) and Mean Reversion (+2.98%) lists, suggesting it was a stock with exceptional volatility during the test period rather than a systematic strategy effect.
 
 ---
 
-## Podsumowanie
+## Transaction Costs Matter
 
-Krótkoterminowe strategie intraday na GPW są możliwe — ale rynek nagradza *odwrotność* intuicji. Mean Reversion, czyli zakład na cofnięcie po silnym ruchu, okazuje się skuteczniejszy niż podążanie za momentum. Gap Up, który wielu inwestorów traktuje jako sygnał do kupna, w naszym teście konsekwentnie generował straty.
+Assuming 0.1% round-trip, every transaction starts with a built-in loss. With 63 transactions per month and an average allocation of ~33,333 PLN per position, costs alone consume ~2,100 PLN per month. For strategies with small average returns (Momentum: −0.14%, EoD: −0.14%) this is the difference between profit and loss.
 
-**To jednak nie jest rekomendacja inwestycyjna** — 30 dni to za mało na wiarygodne wnioski, a wyniki backtestów rzadko przekładają się 1:1 na live trading. Traktuj te wyniki jako punkt wyjścia do dalszych badań, nie jako gotową strategię.
-
-Kod do notebooka dostępny jest na GitHubie [link].
+In practice on GPW, worth considering:
+- Reducing trade frequency (top 1 instead of top 3)
+- Higher signal threshold (e.g., gap > 1% instead of > 0.5%)
+- Liquidity filter — skip stocks with daily turnover below 1 million PLN
 
 ---
 
-*Dane: Yahoo Finance. Backtest wykonany w Pythonie (yfinance, pandas, matplotlib). Koszty transakcyjne 0,1% round-trip. Brak uwzględnienia podatku Belki, poślizgu cenowego i braku płynności.*
+## Summary
+
+Short-term intraday strategies on GPW are possible — but the market rewards the *opposite* of intuition. Mean Reversion, i.e. betting on a reversal after a strong move, proves more effective than following momentum. Gap Up, which many investors treat as a buy signal, consistently generated losses in this test.
+
+**This is not investment advice** — 30 days is too short for reliable conclusions, and backtest results rarely translate 1:1 into live trading. Treat these results as a starting point for further research, not a ready-made strategy.
+
+Notebook code available on GitHub.
+
+---
+
+*Data: Yahoo Finance. Backtest implemented in Python (yfinance, pandas, matplotlib). Transaction costs 0.1% round-trip. Belka tax, price slippage, and illiquidity not modeled.*
