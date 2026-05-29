@@ -6,7 +6,7 @@ Quantitative research notebooks covering momentum and technical indicator strate
 
 | Folder | Description |
 |---|---|
-| [momentum-growth/](momentum-growth/) | Multi-horizon momentum scoring strategy on 354 GPW stocks (2015–2025), converting 1,000 PLN into 13,000 PLN over 10 years |
+| [momentum-growth/](momentum-growth/) | Multi-horizon momentum scoring strategy on 354 GPW stocks (2015–2025); best variant turns 1,000 PLN into ~8,600 PLN over 10 years (no lookahead bias) |
 | [hybrid-strategy/](hybrid-strategy/) | Hybrid technical indicator strategy with daily stop-loss on 354 GPW stocks (2000–2025), testing three stop-loss thresholds |
 | [technical-monthly/](technical-monthly/) | Same technical scoring on monthly rebalancing cadence with per-transaction Belka tax applied in the model |
 | [intraday-gpw/](intraday-gpw/) | Four intraday strategies (momentum, mean reversion, gap up, end-of-day) on ~140 WSE stocks from WIG20/mWIG40/sWIG80 |

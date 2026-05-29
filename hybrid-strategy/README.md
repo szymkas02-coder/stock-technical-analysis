@@ -6,7 +6,9 @@ This project backtests a hybrid technical indicator strategy on 354 Warsaw Stock
 
 ## Methodology
 
-Three stop-loss thresholds are compared: −10%, −20%, and −30%. The best result is achieved with the −10% stop: a 10,000 PLN starting capital grew to 282,200 PLN (+2,722%) with a win rate of 46.9% and max drawdown of −58.6%. Lookahead bias is avoided: signals are computed on the previous day's close, and entries execute on the next day's open. Transaction costs are not modeled explicitly in this variant; a follow-up with monthly rebalancing and Belka tax is in `technical-monthly/`.
+Three stop-loss thresholds are compared: −10%, −20%, and −30%. Lookahead bias is avoided: the score is computed on day *t*'s close and trades execute at day *t+1*'s price (the stop-loss is the one exception — it fires on the current session's price, since that is the price crossing the threshold). With this corrected timing, the −10% stop grows 10,000 PLN to 487,536 PLN (+4,775%, win rate 39.6%), the −20% stop to 241,320 PLN (+2,313%, win rate 52.1%), and the −30% stop to 169,984 PLN (+1,600%, win rate 19.0%).
+
+These returns are gross of transaction costs and tax (not modeled in this variant) and are inflated by survivorship bias (the universe is GPW stocks listed today). Reported max drawdown is extreme (~−99%) because positions in stocks that stop trading are carried flat at cost rather than forward-filled — treat the drawdown figure as a data-quality artifact, not a clean risk metric. A follow-up with monthly rebalancing and Belka tax is in `technical-monthly/`.
 
 ## Data
 

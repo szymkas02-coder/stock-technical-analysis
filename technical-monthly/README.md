@@ -6,7 +6,7 @@ This project extends the hybrid technical scoring strategy from `hybrid-strategy
 
 ## Methodology
 
-Three portfolio corridor variants are tested, differing in how tightly stocks are managed: S1 Conservative (entry ≥ 80%, exit < 40%), S2 Standard (entry ≥ 60%, exit < 30%), and S3 Aggressive (entry ≥ 40%, exit < 20%). Counter-intuitively, the aggressive low-threshold variant wins: S3 grows 10,000 PLN into 509,673 PLN (+4,997%) while generating only 211 transactions and paying 136,387 PLN in tax. S1 Conservative, despite its selectivity, produces 1,025 transactions and 228,095 PLN in tax — demonstrating that high entry thresholds increase churn and tax burden, not reduce them.
+Three portfolio corridor variants are tested, differing in how tightly stocks are managed: S1 Conservative (entry ≥ 80%, exit < 40%), S2 Standard (entry ≥ 60%, exit < 30%), and S3 Aggressive (entry ≥ 40%, exit < 20%). The score is read at each month-end and trades execute at the following month-end price, so there is no lookahead bias. Counter-intuitively, the aggressive low-threshold variant wins: S3 grows 10,000 PLN into 168,114 PLN (+1,581%) while generating only 218 transactions and paying 49,152 PLN in tax. S1 Conservative reaches 315,908 PLN (+3,059%) but at the cost of 1,042 transactions and 201,643 PLN in tax; S2 Standard lands in between (+1,848%, 194,795 PLN). The takeaway holds: high entry thresholds increase churn and tax burden. Returns remain gross of slippage and are subject to survivorship bias (universe = stocks listed today).
 
 ## Data
 
