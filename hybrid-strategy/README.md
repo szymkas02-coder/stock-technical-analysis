@@ -16,4 +16,4 @@ Three stop-loss thresholds are compared: −10%, −20%, and −30%. The best re
 ## Files
 
 - `strategia_hybrydowa_gpw.ipynb` — full daily-cadence backtest notebook
-- `artykul_hybrydowa.md` — written article explaining the scoring system and stop-loss comparison
+- `artykul_hybrydowa.md` — written article explaining the scoring system and stop-loss comparison (kept local, not tracked by git)

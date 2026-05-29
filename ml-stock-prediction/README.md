@@ -17,4 +17,4 @@ No lag from 1 to 40 days shows a statistically significant autocorrelation. The 
 - `01_data.ipynb` — data download, feature engineering, and autocorrelation analysis
 - `02_eda.ipynb` — exploratory data analysis: return distributions, volatility regimes, indicator behavior
 - `03_models.ipynb` — XGBoost model training, validation, and interpretation
-- `ml_one_stock.md` — written article summarizing the findings
+- `ml_one_stock.md` — written article summarizing the findings (kept local, not tracked by git)

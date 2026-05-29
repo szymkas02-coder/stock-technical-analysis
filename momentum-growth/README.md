@@ -17,4 +17,4 @@ Three portfolio management variants are compared, differing in rebalancing frequ
 ## Files
 
 - `strategia_wzrostowa_gpw.ipynb` — full backtest notebook
-- `polish_stock_growth.md` — written article describing the strategy and results
+- `polish_stock_growth.md` — written article describing the strategy and results (kept local, not tracked by git)

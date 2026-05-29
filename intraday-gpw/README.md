@@ -18,4 +18,4 @@ All strategies share common assumptions: 0.05% transaction cost per side (0.1% r
 ## Files
 
 - `intraday_strategies.ipynb` — full 4-strategy backtest notebook
-- `artykul_intraday.md` — written article comparing strategies and discussing GPW liquidity constraints
+- `artykul_intraday.md` — written article comparing strategies and discussing GPW liquidity constraints (kept local, not tracked by git)

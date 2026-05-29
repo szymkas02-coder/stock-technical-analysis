@@ -15,4 +15,4 @@ The portfolio approach ranks all 20 cryptocurrencies daily by signal strength an
 ## Files
 
 - `krypto_strategie.ipynb` — full 8-strategy backtest notebook
-- `artykul_krypto_strategie.md` — written article comparing strategies across crypto vs. equity markets
+- `artykul_krypto_strategie.md` — written article comparing strategies across crypto vs. equity markets (kept local, not tracked by git)

@@ -10,6 +10,10 @@
 plots/
 data/
 *video_script*
+# Article / long-form writeups (kept local, not published)
+*artykul*
+ml-stock-prediction/ml_one_stock.md
+momentum-growth/polish_stock_growth.md
 __pycache__/
 .ipynb_checkpoints/
 *.pyc

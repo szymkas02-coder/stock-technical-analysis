@@ -17,4 +17,4 @@ Three portfolio corridor variants are tested, differing in how tightly stocks ar
 ## Files
 
 - `strategia_techniczna_miesieczna.ipynb` — monthly-cadence backtest with per-transaction tax
-- `artykul_techniczna_miesieczna.md` — written article discussing the tax drag findings
+- `artykul_techniczna_miesieczna.md` — written article discussing the tax drag findings (kept local, not tracked by git)
